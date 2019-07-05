@@ -47,7 +47,7 @@ async function handlerSeparateEngine (opts, cb) {
 
     let REQUIRE_ENGINE_CODE = [
       `require(settings.debug ? 'cocos2d-js.js' : '${cocosEngineName}');`,
-      "require('cocos/cocos2d-js.js');"
+      `require('cocos/${cocosEngineName}');`
     ]
 
     Editor.info("修改 game.js 代码中 require cocos2d-js-min.js 为 requirePlugin('cocos')");
