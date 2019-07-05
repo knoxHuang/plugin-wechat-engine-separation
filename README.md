@@ -11,4 +11,4 @@
 如何使用：
   安装插件以后，重启 Cocos Creator，无需其他操作，它会在构建发布完成后自动进行适配
 
-微信官方文档链接：（待定）
+微信官方文档链接：（https://developers.weixin.qq.com/miniprogram/dev/framework/plugin/）
