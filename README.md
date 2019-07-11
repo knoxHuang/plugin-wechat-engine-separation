@@ -11,6 +11,4 @@
 如何使用：
   安装插件以后，重启 Cocos Creator，即可在构建发布完成后自动进行适配，无需其他操作。
 
-关于微信引擎分离官方文档链接：（ https://developers.weixin.qq.com/miniprogram/dev/framework/plugin ）
-
 后续 Cocos Creator 会将引擎分离功能内置到编辑器中。
