@@ -6,7 +6,7 @@ const crypto = require('crypto');
 const { promisify } = require('util');
 const Globby = require('globby');
 
-const VERSIONS = ['2.0.5', '2.0.6', '2.0.7', '2.0.8', '2.0.9', '2.0.10', '2.1.0', '2.1.1'];
+const VERSIONS = ['2.0.5', '2.0.6', '2.0.7', '2.0.8', '2.0.9', '2.0.10', '2.1.0', '2.1.1', '2.1.2'];
 
 async function handlerSeparateEngine (opts, cb) {
   if (opts.platform !== 'wechatgame') {
@@ -23,7 +23,7 @@ async function handlerSeparateEngine (opts, cb) {
       return cb();
     }
 
-    Editor.info('启动微信小游戏引擎分离旧版本兼容');
+    Editor.info('启动适配微信小游戏引擎分离');
 
     // 调整 cocos2d-js-min.js 的文件存放结构用于满足微信小游戏引擎分离的功能
     const cocos_path = Path.join(opts.dest, 'cocos');
@@ -48,7 +48,7 @@ async function handlerSeparateEngine (opts, cb) {
     let REQUIRE_ENGINE_CODE = [
       `require(settings.debug ? 'cocos2d-js.js' : '${cocosEngineName}');`,
       `require('cocos/${cocosEngineName}');`
-    ]
+    ];
 
     Editor.info("修改 game.js 代码中 require cocos2d-js-min.js 为 requirePlugin('cocos')");
     // 更新 game.js
@@ -59,10 +59,9 @@ async function handlerSeparateEngine (opts, cb) {
       if (content.indexOf(code) > -1) {
         content = content.replace(code, "requirePlugin('cocos')");
         Fs.writeFileSync(gameJSPath, content);
-        console.log('ttest');
         return;
       } 
-    })
+    });
 
     Editor.info('新增 plugins 字段到 game.json');
     // 更新 game.json
@@ -74,7 +73,7 @@ async function handlerSeparateEngine (opts, cb) {
         version: Editor.versions['CocosCreator'],
         path: 'cocos'
       }
-    }
+    };
     Fs.writeFileSync(gameJsonPath, JSON.stringify(content, null, 2));
 
     Editor.info(`拷贝 plugin.json 到 ${cocos_path}`);
@@ -89,10 +88,17 @@ async function handlerSeparateEngine (opts, cb) {
     let signature = content.signature[0];
     const data = Fs.readFileSync(Path.join(cocos_path, 'cocos2d-js-min.js'));
     signature['md5'] = crypto.createHash('md5').update(data).digest('hex');
-    console.log(signature['md5']);
     Fs.writeFileSync(signatureJsonPath, JSON.stringify(content, null, 2));
 
-    Editor.info('完成微信小游戏引擎分离旧版本兼容');
+    Editor.info(`适配 project.config.json `);
+    // 更新 game.json
+    const projectConfigPath = Path.join(opts.dest, 'project.config.json');
+    content = Fs.readJsonSync(projectConfigPath, 'utf8');
+    content['libVersion'] = '9.9.9';
+
+    Fs.writeFileSync(projectConfigPath, JSON.stringify(content, null, 2));
+
+    Editor.info('适配微信小游戏引擎分离完成');
   }
   catch (e) {
     Editor.log(e);
