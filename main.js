@@ -5,8 +5,12 @@ const Fs = require('fire-fs');
 const crypto = require('crypto');
 const { promisify } = require('util');
 const Globby = require('globby');
+const Dialog = require('electron').dialog;
 
 const VERSIONS = ['2.0.5', '2.0.6', '2.0.7', '2.0.8', '2.0.9', '2.0.10', '2.1.0', '2.1.1', '2.1.2'];
+
+// 判断是否为正式版本正则表达式
+const GA_VERSION_REX = /^v?[0-9.]*(?:-p.[0-9]+)?$/;
 
 async function handlerSeparateEngine (opts, cb) {
   if (opts.platform !== 'wechatgame') {
@@ -14,18 +18,30 @@ async function handlerSeparateEngine (opts, cb) {
   }
   try {
     if (VERSIONS.indexOf(Editor.versions.CocosCreator) === -1) {
-      Editor.info(`微信小游戏引擎分离旧版本兼容插件只适用 Cocos Creator 版本: ${VERSIONS.join('|')}`);
+      Dialog.showErrorBox('构建警告', `微信小游戏引擎兼容插件只适用 Cocos Creator 版本: ${VERSIONS.join('|')}`);
       return cb();
+    }
+
+    let localSettings = Editor.Profile.load('profile://local/settings.json');
+    let globalSettings = Editor.Profile.load('profile://global/settings.json');
+    let useDefaultEngine = globalSettings.data['use-default-js-engine'];
+    if (localSettings.data['use-global-engine-setting'] === false) {
+        useDefaultEngine = (localSettings.data['use-default-js-engine'] === true);
+    }
+    let cocos2dVersion = Editor.versions['CocosCreator'];
+    if (!useDefaultEngine || !GA_VERSION_REX.test(cocos2dVersion)) {
+        Dialog.showErrorBox('构建警告', `引擎插件功能仅支持 Cocos Creator 正式版本并且使用内置引擎`);
+        return cb();
     }
 
     if (!!opts.debug) {
-      Editor.info(`微信小游戏引擎分离不适用调试模式`);
+      Dialog.showErrorBox('构建警告', `微信小游戏引擎插件不适用调试模式`);
       return cb();
     }
 
-    Editor.info('启动适配微信小游戏引擎分离');
+    Editor.info('启动适配微信小游戏引擎插件');
 
-    // 调整 cocos2d-js-min.js 的文件存放结构用于满足微信小游戏引擎分离的功能
+    // 调整 cocos2d-js-min.js 的文件存放结构用于满足微信小游戏引擎插件的功能
     const cocos_path = Path.join(opts.dest, 'cocos');
     let cocosEngineName = 'cocos2d-js-min.js';
     if (!Fs.existsSync(cocos_path)) {
@@ -98,7 +114,7 @@ async function handlerSeparateEngine (opts, cb) {
 
     Fs.writeFileSync(projectConfigPath, JSON.stringify(content, null, 2));
 
-    Editor.info('适配微信小游戏引擎分离完成');
+    Editor.info('适配微信小游戏引擎插件完成');
   }
   catch (e) {
     Editor.log(e);
