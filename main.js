@@ -7,7 +7,7 @@ const { promisify } = require('util');
 const Globby = require('globby');
 const Dialog = require('electron').dialog;
 
-const VERSIONS = ['2.0.5', '2.0.6', '2.0.7', '2.0.8', '2.0.9', '2.0.10', '2.1.0', '2.1.1', '2.1.2', '2.1.3'];
+const VERSIONS = ['2.0.5', '2.0.6', '2.0.7', '2.0.8', '2.0.9', '2.0.10', '2.1.0', '2.1.1', '2.1.2', '2.1.3', '2.1.4'];
 
 // 判断是否为正式版本正则表达式
 const GA_VERSION_REX = /^v?[0-9.]*(?:-p.[0-9]+)?$/;
