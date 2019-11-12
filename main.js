@@ -85,7 +85,7 @@ async function handlerSeparateEngine (opts, cb) {
     content = Fs.readJsonSync(gameJsonPath, 'utf8');
     content['plugins'] = {
       cocos: {
-        provider: "c20a4c2d88224d659b12f41014b0d306",
+        provider: "wx7095f7fa398a2f30",
         version: Editor.versions['CocosCreator'],
         path: 'cocos'
       }
