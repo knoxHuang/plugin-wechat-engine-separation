@@ -110,6 +110,10 @@ async function handlerSeparateEngine (opts, cb) {
     // 更新 game.json
     const projectConfigPath = Path.join(opts.dest, 'project.config.json');
     content = Fs.readJsonSync(projectConfigPath, 'utf8');
+    if (content.setting) {
+        content.setting.es6 = false;
+        content.setting.minified = false;
+    }
     content['libVersion'] = '9.9.9';
 
     Fs.writeFileSync(projectConfigPath, JSON.stringify(content, null, 2));
